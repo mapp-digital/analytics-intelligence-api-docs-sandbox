@@ -743,6 +743,109 @@ components:
         - maxCalculationsAllowed
         - month
         - year
+    CustomParameter:
+      type: object
+      properties:
+        values:
+          type: array
+          description: List of possible values
+          items:
+            type: string
+        configurable:
+          type: string
+          description: Indicates if the parameter is configurable
+    ReportElement:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID of the element
+        reportId:
+          type: integer
+          format: int32
+          description: ID of the report
+        type:
+          type: string
+          description: Type of the element for eg. Analysis, KPI, Sparkline
+        configJson:
+          type: object
+          description: Different type of queries are possible
+          oneOf:
+            - $ref: '#/components/schemas/TableQuery'
+            - $ref: '#/components/schemas/KpiQuery'
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Report Id
+        title:
+          type: string
+        description:
+          type: string
+        reportElements:
+          type: array
+          description: Array of columns
+          items:
+            $ref: '#/components/schemas/ReportElement'
+        timeFilter:
+          $ref: '#/components/schemas/Filter'
+        dashboardQuickFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Filter'
+
+        dashboardQuickFilterValues:
+          $ref: '#/components/schemas/CustomParameter'
+    ReportQueryRequest:
+      type: object
+      properties:
+        reportId:
+          type: integer
+          format: int64
+          description: Report Id
+        reportElementIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+            description: Report Element Ids
+        reportConfiguration:
+          $ref: '#/components/schemas/Report'
+
+        timeFilter:
+          $ref: '#/components/schemas/Filter'
+    ReportQueryState:
+      type: object
+      properties:
+        reportCorrelationId:
+          type: string
+          description: Correlation Id of the report
+        status:
+          type: string
+          description: Status of the report after complete analysis
+        details:
+          $ref: '#/components/schemas/ReportQueryStateDetails'
+        queryStates:
+          type: array
+          description: List of query state of all caculation queries
+          items:
+            $ref: '#/components/schemas/QueryState'
+    ReportQueryStateDetails:
+      type: object
+      properties:
+        lastUpdatedAt:
+          type: string
+          format: date-time
+          description: Last updated time of report
+        reportId:
+          type: string
+          description: Report Unique Id
+        reportTitle:
+          type: string
+          description: Report Name
   responses:
     Forbidden:
       description: No permission to execute operation
@@ -953,48 +1056,48 @@ components:
     queryObjectExample:
       value:
         metrics:
-            - name: alexaRanking
-              context: NONE
-              dataType: NUMBER
-              sortable: true
-              title: Alexa Ranking
-              elementType: DEFAULT_METRIC
-              metricDisplayType: NORMAL
-            - name: attribution_1_order_qty
-              context: ACTION
-              dataType: NUMBER
-              sortable: true
-              title: Qty Orders (Attribution last session, external), Order
-              elementType: CAMPAIGNS_ATTRIBUTION
-              metricDisplayType: NORMAL
-            - name: custom_metric_1000853
-              context: SESSION
-              dataType: NUMBER
-              sortable: true
-              title: Android Users (Segment)
-              elementType: CUSTOM_METRIC
-              metricDisplayType: NORMAL
-            - name: media_chapter_1
-              context: ATOMIC
-              dataType: NUMBER
-              sortable: true
-              title: Media Chapter 1
-              elementType: DEFAULT_METRIC
-              metricDisplayType: NORMAL
-            - name: page_category_number_13_sum
-              context: NONE
-              dataType: NUMBER
-              sortable: true
-              title: Social Metrics
-              elementType: CUSTOM_CATEGORY
-              metricDisplayType: NORMAL
-            - name: products_viewed_qty
-              context: ATOMIC
-              dataType: NUMBER
-              sortable: true
-              title: Qty Product Views
-              elementType: DEFAULT_METRIC
-              metricDisplayType: NORMAL
+          - name: alexaRanking
+            context: NONE
+            dataType: NUMBER
+            sortable: true
+            title: Alexa Ranking
+            elementType: DEFAULT_METRIC
+            metricDisplayType: NORMAL
+          - name: attribution_1_order_qty
+            context: ACTION
+            dataType: NUMBER
+            sortable: true
+            title: Qty Orders (Attribution last session, external), Order
+            elementType: CAMPAIGNS_ATTRIBUTION
+            metricDisplayType: NORMAL
+          - name: custom_metric_1000853
+            context: SESSION
+            dataType: NUMBER
+            sortable: true
+            title: Android Users (Segment)
+            elementType: CUSTOM_METRIC
+            metricDisplayType: NORMAL
+          - name: media_chapter_1
+            context: ATOMIC
+            dataType: NUMBER
+            sortable: true
+            title: Media Chapter 1
+            elementType: DEFAULT_METRIC
+            metricDisplayType: NORMAL
+          - name: page_category_number_13_sum
+            context: NONE
+            dataType: NUMBER
+            sortable: true
+            title: Social Metrics
+            elementType: CUSTOM_CATEGORY
+            metricDisplayType: NORMAL
+          - name: products_viewed_qty
+            context: ATOMIC
+            dataType: NUMBER
+            sortable: true
+            title: Qty Product Views
+            elementType: DEFAULT_METRIC
+            metricDisplayType: NORMAL
         dimensions:
           - name: attribution_1
             context: NONE
@@ -1415,6 +1518,72 @@ components:
           - '2021-08-26T00:00:00.000+0200'
           - '2021-09-02T00:00:00.000+0200'
         timestamp: '2021-09-02T09:15:43.567+0200'
+    reportQueryObject:
+      value:
+        id: 3687
+        title: "! !!  ANALYTICS-2295"
+        description: ''
+        reportElements:
+          - id: 74943
+            reportId: 3687
+            type: ANALYSIS
+            configJson:
+              title: Analyis for example
+              columns:
+                - name: time_days
+                  sortDirection: ASCENDING
+                  sortIndex: 1
+                  scope: OBJECT
+                  context: NONE
+                  lowerLimit: 1
+                  upperLimit: 28
+                - name: visits
+                  columnPeriod: ANALYSIS
+                  scope: OBJECT
+                  context: SESSION
+                  variant: NORMAL
+                - name: pages_pageImpressions
+                  columnPeriod: ANALYSIS
+                  scope: OBJECT
+                  context: PAGE
+                  variant: NORMAL
+                - name: visits_newShare
+                  columnPeriod: ANALYSIS
+                  scope: OBJECT
+                  variant: NORMAL
+                - name: visit_duration_avg
+                  columnPeriod: ANALYSIS
+                  scope: OBJECT
+                  variant: NORMAL
+                - name: visits_bounceRate
+                  columnPeriod: ANALYSIS
+                  scope: OBJECT
+                  variant: NORMAL
+              variant: LIST
+        timeFilter:
+          name: time_range
+          connector: AND
+          filterPredicate: BETWEEN
+          value1: '2020-10-14'
+          value2: '2020-11-11'
+          context: NONE
+          caseSensitive: false
+        dashboardQuickFilters:
+          - arrangeType: custom_paras_session_generic42
+            connector: AND
+            filterPredicate: LIKE
+            value1: ''
+            value2: ''
+            context: NONE
+            caseSensitive: false
+            intern: false
+            numberOfDays: 0
+        dashboardQuickFilterValues:
+          custom_paras_session_generic42:
+            configurable: true
+            values: [ ]
+
+
 
 security:
   - oauth_security_scheme:
@@ -1602,6 +1771,99 @@ paths:
                     year: 2022
         '403':
           $ref: '#/components/responses/Forbidden'
+
+  /report-query:
+    post:
+      tags:
+        - Analysis
+      summary: Create multiple calculation queries
+      description: Create multiple calculation queries
+      operationId: createReportQuery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportQueryRequest'
+            examples:
+              ANALYSIS:
+                $ref: '#/components/examples/reportQueryObject'
+
+        required: true
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "422":
+          description: Unprocessable Entity
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReportQueryState'
+  /report-query/{id}:
+    get:
+      tags:
+        - Analysis
+      summary: Get report query state
+      description: Get report query state
+      operationId: status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "422":
+          description: Unprocessable Entity
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReportQueryState'
   /query-objects:
     get:
       tags:
