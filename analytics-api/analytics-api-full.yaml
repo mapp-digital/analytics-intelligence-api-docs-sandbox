@@ -101,6 +101,16 @@ components:
           type: string
         value2:
           type: string
+        values1:
+          type: array
+          description: Array of values
+          items:
+            type: string
+        values2:
+          type: array
+          description: Array of values
+          items:
+            type: string
     Container:
       type: object
       properties:
@@ -792,27 +802,24 @@ components:
             $ref: '#/components/schemas/ReportElement'
         timeFilter:
           $ref: '#/components/schemas/Filter'
-        dashboardQuickFilters:
+        quickFilters:
           type: array
           items:
             $ref: '#/components/schemas/Filter'
-
-        dashboardQuickFilterValues:
-          $ref: '#/components/schemas/CustomParameter'
     ReportQueryRequest:
       type: object
       properties:
-        reportId:
+        id:
           type: integer
           format: int64
           description: Report Id
-        reportElementIds:
+        elementIds:
           type: array
           items:
             type: integer
             format: int64
             description: Report Element Ids
-        reportConfiguration:
+        configuration:
           $ref: '#/components/schemas/Report'
 
         timeFilter:
