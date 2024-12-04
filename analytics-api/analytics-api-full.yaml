@@ -812,13 +812,13 @@ components:
         id:
           type: integer
           format: int64
-          description: Report Id
+          description: Id
         elementIds:
           type: array
           items:
             type: integer
             format: int64
-            description: Report Element Ids
+            description: Element Ids
         configuration:
           $ref: '#/components/schemas/Report'
 
@@ -1575,20 +1575,18 @@ components:
           value2: '2020-11-11'
           context: NONE
           caseSensitive: false
-        dashboardQuickFilters:
+        quickFilters:
           - arrangeType: custom_paras_session_generic42
             connector: AND
             filterPredicate: LIKE
             value1: ''
             value2: ''
+            values1: []
+            values2: []
             context: NONE
             caseSensitive: false
             intern: false
             numberOfDays: 0
-        dashboardQuickFilterValues:
-          custom_paras_session_generic42:
-            configurable: true
-            values: [ ]
 
 
 
