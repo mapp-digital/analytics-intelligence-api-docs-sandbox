@@ -8,16 +8,17 @@
 <div id="swagger-ui"></div>
 <script>
     window.onload = function () {
-        let ui = loadStageSwagger()
-        if (window.location.pathname.includes('Mapp-Intelligence-API-Docs')) {
-            ui = loadProdSwagger()
-        }
-        window.ui = ui
+        window.ui = window.location.pathname.includes('Mapp-Intelligence-API-Docs') ?
+            loadProdSwagger() : loadStageSwagger();
     }
 
-    function loadProdSwagger(url) {
+    function loadProdSwagger() {
+        return loadSwagger("analytics-api-full.yaml");
+    }
+
+    function loadSwagger(url, additionalPlugins = []) {
         return SwaggerUIBundle({
-            url: "analytics-api-full.yaml",
+            url: url,
             dom_id: '#swagger-ui',
             deepLinking: true,
             presets: [
@@ -26,41 +27,42 @@
             ],
             plugins: [
                 SwaggerUIBundle.plugins.DownloadUrl,
+                ...additionalPlugins
             ],
-        })
+        });
     }
 
     function loadStageSwagger() {
-        return SwaggerUIBundle({
-            url: "analytics-api-full.yaml",
-            dom_id: '#swagger-ui',
-            deepLinking: true,
-            presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIBundle.SwaggerUIStandalonePreset
-            ],
-            plugins: [
-                SwaggerUIBundle.plugins.DownloadUrl,
-                () => {
-                    return {
-                        statePlugins: {
-                            spec: {
-                                wrapActions: {
-                                    updateJsonSpec: function (oriAction, system) {
-                                        return (spec) => {
-                                            spec.servers = [{url: 'https://intelligence-int.nbg.webtrekk.com/analytics/api/', description: 'INT'}
-                                                ,{url: 'https://intelligence-qa.nbg.webtrekk.com/analytics/api/', description: 'QA'}]
-                                            return oriAction(spec)
-                                        }
-                                    }
+        const stagePlugins = [
+            () => {
+                return {
+                    statePlugins: {
+                        spec: {
+                            wrapActions: {
+                                updateJsonSpec: function (oriAction, system) {
+                                    return (spec) => {
+                                        spec.servers = [
+                                            {
+                                                url: 'https://intelligence-int.nbg.webtrekk.com/analytics/api/',
+                                                description: 'INT'
+                                            },
+                                            {
+                                                url: 'https://intelligence-qa.nbg.webtrekk.com/analytics/api/',
+                                                description: 'QA'
+                                            }
+                                        ];
+                                        return oriAction(spec);
+                                    };
                                 }
                             }
                         }
                     }
-                }
-            ],
-        })
+                };
+            }
+        ];
+        return loadSwagger("analytics-api-full.yaml", stagePlugins);
     }
+
 </script>
 </body>
 </html>
