@@ -8,7 +8,14 @@
 <div id="swagger-ui"></div>
 <script>
   window.onload = function () {
-    const ui = SwaggerUIBundle({
+    if(window.location.pathname.includes('Mapp-Intelligence-API-Docs')){
+
+    }
+    const ui = loadProdSwagger()
+    window.ui = ui
+  }
+  function loadProdSwagger(url) {
+    return SwaggerUIBundle({
       url: "analytics-api-full.yaml",
       dom_id: '#swagger-ui',
       deepLinking: true,
@@ -20,7 +27,20 @@
         SwaggerUIBundle.plugins.DownloadUrl
       ],
     })
-    window.ui = ui
+  }
+  function loadStageSwagger() {
+    return SwaggerUIBundle({
+      url: "analytics-api-full.yaml",
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+    })
   }
 </script>
 </body>
