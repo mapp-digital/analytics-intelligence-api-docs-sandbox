@@ -24,7 +24,23 @@
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
       plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl
+        SwaggerUIBundle.plugins.DownloadUrl,
+        () => {
+          return {
+            statePlugins: {
+              spec: {
+                wrapActions: {
+                  updateJsonSpec: function(oriAction, system) {
+                    return (spec) => {
+                      spec.servers = [{url: window.location.origin}]
+                      return oriAction(spec)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ],
     })
   }
@@ -38,7 +54,23 @@
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
       plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl
+        SwaggerUIBundle.plugins.DownloadUrl,
+        () => {
+          return {
+            statePlugins: {
+              spec: {
+                wrapActions: {
+                  updateJsonSpec: function(oriAction, system) {
+                    return (spec) => {
+                      spec.servers = [{url: window.location.origin}]
+                      return oriAction(spec)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       ],
     })
   }
