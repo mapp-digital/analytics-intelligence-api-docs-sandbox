@@ -1,79 +1,66 @@
 <html>
 <head>
-  <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css"/>
-  <title>Mapp Intelligence AnalyticsAPI</title>
+    <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css"/>
+    <title>Mapp Intelligence AnalyticsAPI</title>
 </head>
 <body>
 <div id="swagger-ui"></div>
 <script>
-  window.onload = function () {
-    if(window.location.pathname.includes('Mapp-Intelligence-API-Docs')){
-
+    window.onload = function () {
+        let ui = loadStageSwagger()
+        if (window.location.pathname.includes('Mapp-Intelligence-API-Docs')) {
+            ui = loadProdSwagger()
+        }
+        window.ui = ui
     }
-    const ui = loadProdSwagger()
-    window.ui = ui
-  }
-  function loadProdSwagger(url) {
-    return SwaggerUIBundle({
-      url: "analytics-api-full.yaml",
-      dom_id: '#swagger-ui',
-      deepLinking: true,
-      presets: [
-        SwaggerUIBundle.presets.apis,
-        SwaggerUIBundle.SwaggerUIStandalonePreset
-      ],
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl,
-        () => {
-          return {
-            statePlugins: {
-              spec: {
-                wrapActions: {
-                  updateJsonSpec: function(oriAction, system) {
-                    return (spec) => {
-                      spec.servers = [{url: window.location.origin}]
-                      return oriAction(spec)
+
+    function loadProdSwagger(url) {
+        return SwaggerUIBundle({
+            url: "analytics-api-full.yaml",
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl,
+            ],
+        })
+    }
+
+    function loadStageSwagger() {
+        return SwaggerUIBundle({
+            url: "analytics-api-full.yaml",
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl,
+                () => {
+                    return {
+                        statePlugins: {
+                            spec: {
+                                wrapActions: {
+                                    updateJsonSpec: function (oriAction, system) {
+                                        return (spec) => {
+                                            spec.servers = [{url: 'https://intelligence-int.nbg.webtrekk.com/analytics/api/', description: 'INT'}
+                                                ,{url: 'https://intelligence-qa.nbg.webtrekk.com/analytics/api/', description: 'QA'}]
+                                            return oriAction(spec)
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                  }
                 }
-              }
-            }
-          }
-        }
-      ],
-    })
-  }
-  function loadStageSwagger() {
-    return SwaggerUIBundle({
-      url: "analytics-api-full.yaml",
-      dom_id: '#swagger-ui',
-      deepLinking: true,
-      presets: [
-        SwaggerUIBundle.presets.apis,
-        SwaggerUIBundle.SwaggerUIStandalonePreset
-      ],
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl,
-        () => {
-          return {
-            statePlugins: {
-              spec: {
-                wrapActions: {
-                  updateJsonSpec: function(oriAction, system) {
-                    return (spec) => {
-                      spec.servers = [{url: window.location.origin}]
-                      return oriAction(spec)
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
-    })
-  }
+            ],
+        })
+    }
 </script>
 </body>
 </html>
