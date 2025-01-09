@@ -540,6 +540,12 @@ components:
       title: QueryState
       type: object
       properties:
+        accountId:
+          type: string
+          description: Id of the account
+        correlationId:
+          type: string
+          description:  ID of the query
         calculationId:
           type: string
           description: Id of the calculated data
@@ -561,6 +567,9 @@ components:
             lastUpdatedAt:
               type: number
               description: 'Last update time in milliseconds since the UNIX epoch'
+            reportElementId:
+              type: number
+              description: 'ID of the report element'
     DataTypeEnum:
       type: string
       description: Type of data
@@ -1527,66 +1536,274 @@ components:
         timestamp: '2021-09-02T09:15:43.567+0200'
     reportQueryObject:
       value:
-        id: 3687
-        title: "! !!  ANALYTICS-2295"
-        description: ''
-        reportElements:
-          - id: 74943
-            reportId: 3687
-            type: ANALYSIS
-            configJson:
-              title: Analyis for example
-              columns:
-                - name: time_days
-                  sortDirection: ASCENDING
-                  sortIndex: 1
-                  scope: OBJECT
-                  context: NONE
-                  lowerLimit: 1
-                  upperLimit: 28
-                - name: visits
-                  columnPeriod: ANALYSIS
-                  scope: OBJECT
-                  context: SESSION
-                  variant: NORMAL
-                - name: pages_pageImpressions
-                  columnPeriod: ANALYSIS
-                  scope: OBJECT
-                  context: PAGE
-                  variant: NORMAL
-                - name: visits_newShare
-                  columnPeriod: ANALYSIS
-                  scope: OBJECT
-                  variant: NORMAL
-                - name: visit_duration_avg
-                  columnPeriod: ANALYSIS
-                  scope: OBJECT
-                  variant: NORMAL
-                - name: visits_bounceRate
-                  columnPeriod: ANALYSIS
-                  scope: OBJECT
-                  variant: NORMAL
-              variant: LIST
-        timeFilter:
-          name: time_range
-          connector: AND
-          filterPredicate: BETWEEN
-          value1: '2020-10-14'
-          value2: '2020-11-11'
-          context: NONE
-          caseSensitive: false
-        quickFilters:
-          - arrangeType: custom_paras_session_generic42
+        configuration:
+          id: 3687
+          title: "! !!  ANALYTICS-2295"
+          description: ''
+          timeFilter:
+            arrangeType: times_internal_day
             connector: AND
-            filterPredicate: LIKE
-            value1: ''
-            value2: ''
-            values1: []
-            values2: []
+            filterPredicate: BETWEEN
+            value1: '2022-10-15'
+            value2: '2023-12-28'
             context: NONE
             caseSensitive: false
             intern: false
             numberOfDays: 0
+          reportElements:
+            - type: TEXTBOX_DESCRIPTION
+              id: 43942
+              position: 0
+              positionAsPoint:
+                x: 0
+                "y": 0
+              width: 3
+              height: 1
+              reportId: 3687
+              configJson: { }
+            - type: TEXTBOX_CONTENT_TABLE
+              id: 43944
+              position: 1
+              positionAsPoint:
+                x: 3
+                "y": 0
+              width: 3
+              height: 1
+              reportId: 3687
+              configJson: { }
+            - type: ANALYSIS
+              id: 43946
+              position: 2
+              positionAsPoint:
+                x: 0
+                "y": 0
+              width: 3
+              height: 78
+              reportId: 3687
+              configJson:
+                predefinedContainer:
+                  filters: [ ]
+                  containers: [ ]
+                  combined: false
+                title: ThisareallyreallylongtrafficanalysistitleaimingtobreakthesidemenuUI
+                realTime: false
+                predefinedSegmentConnections: [ ]
+                columns:
+                  - arrangeType: time_id_categories_t_year_month_day
+                    dataType: NUMBER
+                    sortDirection: ASCENDING
+                    title: Days
+                    scope: OBJECT
+                    context: NONE
+                    visible: true
+                    dimension: true
+                    metric: false
+                    alias: time_id_categories_t_year_month_day|0
+                    lowerLimit: 1
+                    upperLimit: 28
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                  - arrangeType: visits
+                    dataType: NUMBER
+                    title: Visits
+                    scope: OBJECT
+                    context: SESSION
+                    variant: NORMAL
+                    visible: true
+                    dimension: false
+                    metric: true
+                    predefinedContainer:
+                      filters: [ ]
+                      containers: [ ]
+                      combined: false
+                    alias: visits|0
+                    inTimeSeries: false
+                    chart:
+                      visible: true
+                      yAxis: 0
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                    columnPeriod: ANALYSIS
+                    round: -1
+                    roundConfig:
+                      override: false
+                      round: 2
+                  - arrangeType: page_impressions
+                    dataType: NUMBER
+                    title: Page Impressions
+                    scope: OBJECT
+                    context: PAGE
+                    variant: NORMAL
+                    visible: true
+                    dimension: false
+                    metric: true
+                    predefinedContainer:
+                      filters: [ ]
+                      containers: [ ]
+                      combined: false
+                    alias: page_impressions|0
+                    inTimeSeries: false
+                    chart:
+                      visible: false
+                      yAxis: 0
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                    columnPeriod: ANALYSIS
+                    round: -1
+                    roundConfig:
+                      override: false
+                      round: 2
+                  - arrangeType: predefined_formula_new_visitor_rate
+                    dataType: NUMBER
+                    title: New Visit Rate %
+                    metricDisplayType: DISTRIBUTION
+                    dataVisual: BARS
+                    scope: OBJECT
+                    variant: NORMAL
+                    visible: true
+                    dimension: false
+                    metric: true
+                    predefinedContainer:
+                      filters: [ ]
+                      containers: [ ]
+                      combined: false
+                    alias: predefined_formula_new_visitor_rate|0
+                    inTimeSeries: false
+                    chart:
+                      visible: true
+                      yAxis: 1
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                    columnPeriod: ANALYSIS
+                    round: 2
+                    roundConfig:
+                      override: false
+                      round: 2
+                  - arrangeType: predefined_formula_avg_visit_duration
+                    dataType: NUMBER
+                    title: Visit Duration Avg
+                    metricDisplayType: TIME
+                    dataVisual: BARS
+                    scope: OBJECT
+                    variant: NORMAL
+                    visible: true
+                    dimension: false
+                    metric: true
+                    predefinedContainer:
+                      filters: [ ]
+                      containers: [ ]
+                      combined: false
+                    alias: predefined_formula_avg_visit_duration|0
+                    inTimeSeries: false
+                    chart:
+                      visible: false
+                      yAxis: 0
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                    columnPeriod: ANALYSIS
+                    round: 2
+                    roundConfig:
+                      override: false
+                      round: 2
+                  - arrangeType: predefined_formula_bounce_rate
+                    dataType: NUMBER
+                    title: Bounce Rate %
+                    metricDisplayType: DISTRIBUTION
+                    dataVisual: TRAFFIC_LIGHT
+                    dataVisualTarget: MIN
+                    dataVisualTargetMax: auto
+                    dataVisualTargetMin: auto
+                    scope: OBJECT
+                    variant: NORMAL
+                    visible: true
+                    dimension: false
+                    metric: true
+                    predefinedContainer:
+                      filters: [ ]
+                      containers: [ ]
+                      combined: false
+                    alias: predefined_formula_bounce_rate|0
+                    inTimeSeries: false
+                    chart:
+                      visible: true
+                      yAxis: 1
+                    sumValue: false
+                    predefinedSegmentConnections: [ ]
+                    columnPeriod: ANALYSIS
+                    round: 2
+                    roundConfig:
+                      override: false
+                      round: 2
+                variant: LIST
+                standardChart: LINE
+                showTable: true
+                showPic: true
+                forbidChart: false
+                viewMode:
+                  standard:
+                    pivotState: [ ]
+                    sankeyConfig:
+                      reverse: false
+                      pathLength: 5
+                      chartState: [ ]
+                  timeSeries:
+                    timeArrangeType: time_id_categories_t_year_week
+                    values: [ ]
+                    top: 3
+                    viewType: values
+                  comparison:
+                    type: time
+                    sorting:
+                      time: [ ]
+                      segment: [ ]
+                    values:
+                      time: [ ]
+                      segment: [ ]
+                    collapsed: { }
+                    primaryChangeType: { }
+                  path:
+                    reverse: false
+                    metricArrangeType: ''
+                    dimensionContext: NONE
+                    pathLength: 5
+                    distinct: true
+                    chartState: [ ]
+                  crossTable:
+                    metricArrangeType: ''
+                    metricSortDirection: DESCENDING
+                    crossDimensionSortDirection: ''
+                    mainDimensionSortDirection: ''
+                    dimensionUpperLimit: 10
+                    crossDimensionArrangeType: ''
+          showInMenu: true
+          predefined: false
+          creatorSSOUserId: 7
+          modifierSSOUserId: 7
+          creationTime: '2020-11-11T07:06:55+0000'
+          modificationTime: '2021-12-17T09:48:24+0000'
+          showContent: true
+          gridColumns: 0
+          publicReport: false
+          startDialogConfigurable: true
+          startDialogEnabled: false
+          quickFilters:
+            - arrangeType: custom_paras_session_generic42
+              connector: AND
+              filterPredicate: LIKE
+              value1: ''
+              value2: ''
+              context: NONE
+              caseSensitive: false
+              intern: false
+              numberOfDays: 0
+          dashboardQuickFiltersCollapsed: false
+          dashboardQuickFilterValues:
+            custom_paras_session_generic42:
+              configurable: true
+              values: [ ]
+          categories: [ ]
+          autoRefresh: false
+
 
 
 
