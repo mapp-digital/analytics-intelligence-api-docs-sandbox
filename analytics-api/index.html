@@ -1,27 +1,68 @@
 <html>
 <head>
-  <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css"/>
-  <title>Mapp Intelligence AnalyticsAPI</title>
+    <script src="https://unpkg.com/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4/swagger-ui.css"/>
+    <title>Mapp Intelligence AnalyticsAPI</title>
 </head>
 <body>
 <div id="swagger-ui"></div>
 <script>
-  window.onload = function () {
-    const ui = SwaggerUIBundle({
-      url: "analytics-api-full.yaml",
-      dom_id: '#swagger-ui',
-      deepLinking: true,
-      presets: [
-        SwaggerUIBundle.presets.apis,
-        SwaggerUIBundle.SwaggerUIStandalonePreset
-      ],
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl
-      ],
-    })
-    window.ui = ui
-  }
+    window.onload = function () {
+        window.ui = window.location.pathname.includes('Mapp-Intelligence-API-Docs') ?
+            loadProdSwagger() : loadStageSwagger();
+    }
+
+    function loadProdSwagger() {
+        return loadSwagger("analytics-api-full.yaml");
+    }
+
+    function loadSwagger(url, additionalPlugins = []) {
+        return SwaggerUIBundle({
+            url: url,
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl,
+                ...additionalPlugins
+            ],
+        });
+    }
+
+    function loadStageSwagger() {
+        const stagePlugins = [
+            () => {
+                return {
+                    statePlugins: {
+                        spec: {
+                            wrapActions: {
+                                updateJsonSpec: function (oriAction, system) {
+                                    return (spec) => {
+                                        spec.servers = [
+                                            {
+                                                url: 'https://intelligence-int.nbg.webtrekk.com/analytics/api/',
+                                                description: 'INT'
+                                            },
+                                            {
+                                                url: 'https://intelligence-qa.nbg.webtrekk.com/analytics/api/',
+                                                description: 'QA'
+                                            }
+                                        ];
+                                        return oriAction(spec);
+                                    };
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+        ];
+        return loadSwagger("analytics-api-full.yaml", stagePlugins);
+    }
+
 </script>
 </body>
 </html>
