@@ -2090,6 +2090,8 @@ paths:
       tags:
         - Analysis
       operationId: deleteReportAnalysis
+      summary: Cancel report calculation
+      description: Cancel report calculation
       parameters:
         - name: id
           in: path
