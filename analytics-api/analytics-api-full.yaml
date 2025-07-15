@@ -2171,7 +2171,7 @@ paths:
     post:
       tags:
         - Analysis
-      summary: Create multiple calculation queries, also known as a report.
+      summary: Create report calculation query
       description: Create multiple calculation queries, also known as a report.
       operationId: createReportQuery
       requestBody:
