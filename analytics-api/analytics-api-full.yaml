@@ -23,7 +23,7 @@ components:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: https://intelligence.eu.mapp.com/analytics/api/oauth/token
+          tokenUrl: /analytics/api/oauth/token
           scopes:
             mapp.intelligence-api: Use intelligence APIs
   schemas:
@@ -229,6 +229,8 @@ components:
           enum:
             - comparison
             - timeSeries
+            - path
+            - crossTable
         comparison:
           type: object
           properties:
@@ -281,6 +283,64 @@ components:
               description: A list of object values - i.e. ["Seach", "Cart", "Home"] for object "pages".
               items:
                 type: string
+        path:
+          type: object
+          properties:
+            metricName:
+              type: string
+              description: The name of the metric used in the path analysis - i.e. "visits".
+            dimensionContext:
+              type: string
+              description: The context in which the dimension for the path analysis is evaluated.
+              enum:
+                - VISITOR
+                - SESSION
+                - PAGE
+                - ACTION
+                - ATOMIC
+                - NONE
+            reverse:
+              type: boolean
+              description: Whether the path analysis should be performed in reverse order.
+            distinct:
+              type: boolean
+              description: Whether to count only unique paths in the analysis.
+            pathLength:
+              type: integer
+              description: The maximum number of steps to include in the path analysis.
+        crossTable:
+          type: object
+          properties:
+            metricName:
+              type: string
+              description: The name of the metric used for values in the cross table analysis - i.e. "pages_pageImpressions".
+            crossDimensionName:
+              type: string
+              description: The name of the dimension used for the cross-analysis - i.e. "browser_fullName".
+            mainDimensionSortDirection:
+              type: string
+              description: Sort direction for the main dimension.
+              enum:
+                - ASCENDING
+                - DESCENDING
+                - ""
+            metricSortDirection:
+              type: string
+              description: Sort direction for the metric values.
+              enum:
+                - ASCENDING
+                - DESCENDING
+                - ""
+            dimensionUpperLimit:
+              type: integer
+              description: The maximum number of dimension values to include in the analysis.
+            crossDimensionSortDirection:
+              type: string
+              description: Sort direction for the cross dimension.
+              enum:
+                - ASCENDING
+                - DESCENDING
+                - ""
     ViewModeComparisonSortingItem:
       type: object
       description: Sorting of comparison
@@ -1068,6 +1128,115 @@ components:
                 value1: last_7_days
                 value2: ''
             containers: [ ]
+    analysisPath:
+      value:
+        resultType: DATA_ONLY
+        queryObject:
+          columns:
+            - name: pages
+              scope: OBJECT
+              context: PAGE
+              variant: NORMAL
+              lowerLimit: 1
+              upperLimit: 20
+            - name: pages_pageImpressions
+              columnPeriod: ANALYSIS
+              sortDirection: DESCENDING
+              sortIndex: 1
+              scope: OBJECT
+              context: PAGE
+              variant: NORMAL
+            - name: visits
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              context: SESSION
+              variant: NORMAL
+            - name: pages_durationAvg
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+            - name: visits_bounceRate
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+            - name: pages_exitRate
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+          viewMode:
+            active: path
+            path:
+              metricName: visits
+              dimensionContext: SESSION
+              reverse: false
+              distinct: true
+              pathLength: 5
+          variant: LIST
+          predefinedContainer:
+            filters:
+              - name: time_range
+                filterPredicate: BETWEEN
+                connector: AND
+                caseSensitive: false
+                context: NONE
+                value1: '2025-05-20 00:00:00'
+                value2: '2025-06-17 00:00:00'
+            containers: [ ]
+    analysisCrossTable:
+      value:
+        resultType: DATA_ONLY
+        queryObject:
+          columns:
+            - name: pages
+              scope: OBJECT
+              context: PAGE
+              variant: NORMAL
+              lowerLimit: 1
+              upperLimit: 20
+            - name: pages_pageImpressions
+              columnPeriod: ANALYSIS
+              sortDirection: DESCENDING
+              sortIndex: 1
+              scope: OBJECT
+              context: PAGE
+              variant: NORMAL
+            - name: visits
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              context: SESSION
+              variant: NORMAL
+            - name: pages_durationAvg
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+            - name: visits_bounceRate
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+            - name: pages_exitRate
+              columnPeriod: ANALYSIS
+              scope: OBJECT
+              variant: NORMAL
+          viewMode:
+            active: crossTable
+            crossTable:
+              metricName: pages_pageImpressions
+              crossDimensionName: browser_fullName
+              mainDimensionSortDirection: ""
+              metricSortDirection: DESCENDING
+              dimensionUpperLimit: 10
+              crossDimensionSortDirection: ""
+          variant: LIST
+          predefinedContainer:
+            filters:
+              - name: time_range
+                filterPredicate: BETWEEN
+                connector: AND
+                caseSensitive: false
+                context: NONE
+                value1: '2025-05-20 00:00:00'
+                value2: '2025-06-17 00:00:00'
+            containers: [ ]
 
     queryObjectExample:
       value:
@@ -1837,6 +2006,10 @@ paths:
                 $ref: '#/components/examples/analysisQueryComparison'
               TimeSeries:
                 $ref: '#/components/examples/analysisQueryTimeSeries'
+              Path:
+                $ref: '#/components/examples/analysisPath'
+              CrossTable:
+                $ref: '#/components/examples/analysisCrossTable'
       responses:
         '200':
           description: Analysis completed
@@ -1998,8 +2171,8 @@ paths:
     post:
       tags:
         - Analysis
-      summary: Create multiple calculation queries
-      description: Create multiple calculation queries
+      summary: Create multiple calculation queries, also known as a report.
+      description: Create multiple calculation queries, also known as a report.
       operationId: createReportQuery
       requestBody:
         content:
@@ -2056,36 +2229,63 @@ paths:
           schema:
             type: string
       responses:
-        "404":
-          description: Not Found
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Problem'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         "500":
           description: Internal Server Error
           content:
-            '*/*':
+            'application/json':
               schema:
                 $ref: '#/components/schemas/Problem'
-        "422":
-          description: Unprocessable Entity
-          content:
-            '*/*':
-              schema:
-                type: object
         "400":
           description: Bad Request
           content:
-            '*/*':
+            'application/json':
               schema:
                 $ref: '#/components/schemas/Problem'
         "200":
           description: OK
           content:
-            '*/*':
+            'application/json':
               schema:
                 $ref: '#/components/schemas/ReportQueryState'
+              examples:
+                Analysis running:
+                  value:
+                    reportCorrelationId: 1ea0f0c7-b05e-47e6-8d4f-e78787dfe9ac
+                    status: RUNNING
+                    details:
+                      lastUpdatedAt: 2024-09-23T18:01:08.280Z
+                      reportId: 1006
+                      reportTitle: "Advertiser Overview"
+                    queryStates:
+                      - calculationId: 579d66fe984f72f7154c5f48e0d3d65741dac870eb337a0524d4d3db02f119b7_294915650484552
+                        accountId: 294915650484552
+                        correlationId: 1ba0f0c7-b05e-47e6-8d4f-e78787dfe9ab
+                        resultUrl: https://intelligence.eu.mapp.com/analytics/api/analysis-query/1ba0f0c7-b05e-47e6-8d4f-e78787dfe9ab
+                        status: RUNNING
+                        details:
+                          lastUpdatedAt: 2024-09-23T18:01:08.280Z
+                          reportElementId: 43946
+                Analysis completed:
+                  value:
+                    reportCorrelationId: 1ea0f0c7-b05e-47e6-8d4f-e78787dfe9ac
+                    status: SUCCESS
+                    details:
+                      lastUpdatedAt: 2024-09-23T18:01:08.280Z
+                      reportId: 1006
+                      reportTitle: "Advertiser Overview"
+                    queryStates:
+                      - calculationId: 579d66fe984f72f7154c5f48e0d3d65741dac870eb337a0524d4d3db02f119b7_294915650484552
+                        accountId: 294915650484552
+                        correlationId: 1ba0f0c7-b05e-47e6-8d4f-e78787dfe9ab
+                        resultUrl: https://intelligence.eu.mapp.com/analytics/api/analysis-result/579d66fe984f72f7154c5f48e0d3d65741dac870eb337a0524d4d3db02f119b7_294915650484552
+                        status: SUCCESS
+                        details:
+                          lastUpdatedAt: 2024-09-23T18:01:08.280Z
+                          reportElementId: 43946
     delete:
       tags:
         - Analysis
