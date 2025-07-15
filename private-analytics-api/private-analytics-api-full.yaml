@@ -2198,8 +2198,8 @@ paths:
     post:
       tags:
         - Analysis
-      summary: Create multiple calculation queries
-      description: Create multiple calculation queries
+      summary: Create report calculation query
+      description: Create multiple calculation queries, also known as a report.
       operationId: createReportQuery
       requestBody:
         content:
@@ -2246,8 +2246,8 @@ paths:
     get:
       tags:
         - Analysis
-      summary: Get report query state
-      description: Get report query state
+      summary: Get report calculation query state
+      description: Get report calculation query state
       operationId: status
       parameters:
         - name: id
@@ -2290,6 +2290,8 @@ paths:
       tags:
         - Analysis
       operationId: deleteReportAnalysis
+      summary: Cancel report calculation query
+      description: Cancel report calculation query
       parameters:
         - name: id
           in: path
